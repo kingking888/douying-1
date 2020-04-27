@@ -20,7 +20,7 @@ class CommentsInterceptor(Interceptor):
             mongo_info.save_user(user_info)
 
             cmt_info = {}
-            # cmt_info['cid']         = comment['cid']
+            cmt_info['cid']         = comment['cid']
             cmt_info['aweme_id']    = comment['aweme_id']
             cmt_info['uid']         = comment['user']['uid']
             cmt_info['text']        = comment['text']

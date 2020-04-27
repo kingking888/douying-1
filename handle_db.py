@@ -10,11 +10,7 @@ class Connect_mongo(object):
     def save_comment(self,data):
         tb = self.db["comment"]
         # aweme_id 视频ID
-        # tb.find_one_and_update({'_id':data['cid']},{'$set':data},upsert=True)
-        if data['aweme_id'] and data['uid']:
-            tb.find_one_and_update({'aweme_id':data['aweme_id'],'uid': data['uid']},{'$set':data},upsert=True)
-        else:
-            print("*********************************\nwarning::save_comment update faild,cant get short_id!\n*********************************")
+        tb.find_one_and_update({'cid':data['cid']},{'$set':data},upsert=True)
 
     def save_user(self,data):
         tb = self.db["user"]
@@ -65,3 +61,5 @@ mongo_info=Connect_mongo()
 # mongo_info.save_user(mongo_info.packUser({'short_id':1,'nickname':'smw'}))
 # mongo_info.save_user(mongo_info.packUser({'short_id':1,'unique_id':'10000'}))
 # mongo_info.save_user(mongo_info.packUser({'short_id':1,'unique_id':'0'}))
+# mongo_info.save_comment({'uid':1,"aweme_id":'1','text':'test text'})
+# mongo_info.save_comment({'uid':1,"aweme_id":'1','text':'test text'})

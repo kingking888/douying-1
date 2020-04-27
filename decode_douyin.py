@@ -15,13 +15,13 @@ class Listener:
         pass
 
     def request(self,flow:http.HTTPFlow):
-        print("-------------------------------request url:" + flow.request.pretty_url)
+        # print("-------------------------------request url:" + flow.request.pretty_url)
         for interceptor in interceptors:
             if interceptor.match(flow):
                 interceptor.request(flow)
 
     def response(self,flow:http.HTTPFlow):
-        print("-------------------------------response url:" + flow.request.pretty_url)
+        # print("-------------------------------response url:" + flow.request.pretty_url)
         for interceptor in interceptors:
             if interceptor.match(flow):
                 interceptor.response(flow)
