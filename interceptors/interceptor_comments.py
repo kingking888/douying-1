@@ -24,4 +24,6 @@ class CommentsInterceptor(Interceptor):
             cmt_info['aweme_id']    = comment['aweme_id']
             cmt_info['uid']         = comment['user']['uid']
             cmt_info['text']        = comment['text']
+            cmt_info['create_time'] = comment['create_time'] #
+            cmt_info['digg_count']  = comment['digg_count'] #评论点赞数量
             mongo_info.save_comment(cmt_info)
