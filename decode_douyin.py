@@ -3,9 +3,10 @@ import json
 from interceptors.interceptor_fans import FansInterceptor
 from interceptors.interceptor_comments import CommentsInterceptor
 from interceptors.interceptor_userinfo import UserInfoInterceptor
+from interceptors.interceptor_videolist import VideoListInterceptor
 from mitmproxy import http
 
-interceptors = [CommentsInterceptor(),FansInterceptor(),UserInfoInterceptor()]
+interceptors = [CommentsInterceptor(),VideoListInterceptor(),FansInterceptor(),UserInfoInterceptor()]
 
 
 
