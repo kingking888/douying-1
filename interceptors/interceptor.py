@@ -30,7 +30,7 @@ class Interceptor:
         if unique_id and unique_id != '0':
             user_info['unique_id'] = unique_id
         if nickname:
-            user_info['nickname'] = nickname
+            user_info['nike'] = nickname
         # 0 male 1 female 2 unset
         if user.get('gender'):
             user_info['gender'] = user['gender']
@@ -45,7 +45,7 @@ class Interceptor:
             user_info['signature'] = user.get('signature')
         if user.get('school_name'):
             user_info['school_name'] = user.get('school_name')
-        if user.get('district'):#地区
+        if user.get('area'):#地区
             user_info['district'] = user.get('district')
         if user.get('location'):  # 位置
             user_info['location'] = user.get('location')
@@ -55,4 +55,7 @@ class Interceptor:
             user_info['city'] = user.get('city')
         if user.get('twitter_name'):#
             user_info['twitter_name'] = user.get('twitter_name')
+        if user.get('avatar_medium') and len(user.get('avatar_medium').get("url_list")) > 0:
+            user_info['head_icon'] = user.get('avatar_medium').get("url_list")[0]
+
         return user_info
