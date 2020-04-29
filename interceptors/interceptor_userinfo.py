@@ -18,5 +18,4 @@ class UserInfoInterceptor(Interceptor):
         print("UserInfoInterceptor matched------------------------------")
         user        = json.loads(flow.response.text)['user']
         user_info   = Interceptor.packUser(self,user)
-        # print("************************************************************************\n"+ str(user_info) + "\n************************************************************************")
         mongo_info.save_user(user_info)

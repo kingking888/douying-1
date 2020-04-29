@@ -1,4 +1,5 @@
 import pymongo
+import re
 
 class Connect_mongo(object):
     def __init__(self):
@@ -12,6 +13,19 @@ class Connect_mongo(object):
         # aweme_id 视频ID
         tb.find_one_and_update({'cid':data['cid']},{'$set':data},upsert=True)
 
+
+    def save_request_info(self,data):
+        if not data['path']:
+            print("warnning::save_request_info's path param is nil!!!!")
+            return
+        tb = self.db['request']
+        tb.find_one_and_replace({'path':data['path']},data,upsert=True)
+
+    def get_request_info(self,path):
+        tb = self.db['request']
+        return tb.find_one({'path':path})
+
+    #保存用户
     def save_user(self,data):
         tb = self.db["user"]
         if data.get('short_id'):
@@ -22,48 +36,43 @@ class Connect_mongo(object):
             tb.find_one_and_update({'uid': data.get('uid')}, {'$set': data}, upsert=True)
         else:
             print("warning::save_user update failed,cant get short_id or unique_id or uid!!!!!!")
+
+    # 保存粉丝
     def save_fans(self,data):
         tb = self.db['fans']
         tb.find_one_and_update({'uid': data.get('uid'),'fid':data.get('fid')}, {'$set': data}, upsert=True)
 
+    global max_group_id
+    max_group_id = -1
+    def find_insert_keyword(self,data):
+        tb = self.db['keywords']
+        item = tb.find_one({'keyword':re.compile(data['keyword'])})
+        tb.aggregate()
+
+        if item == None:
+            global max_group_id
+            if max_group_id == -1:
+                datas = tb.find({})
+                print(datas.count())
+                if datas.count() == 0:
+                    max_group_id = 0
+                else:
+                    tmp = datas.collection.sort({"group_id":-1}).limit(1)
+                    max_group_id = max_group_id
+            max_group_id += 1
+            data['group_id'] = max_group_id
+            item = tb.insert_one(data)
+        return item
 
     def handle_get_task(self):
         # 获取到数据，并删除数据库中的文档
         return self.db['douyin'].find_one_and_delete({})
-
-    # def packUser(self,user):
-    #     user_info = {}
-    #
-    #     uid         = user.get('uid')
-    #     short_id    = user.get('short_id')
-    #     unique_id   = user.get('unique_id')
-    #     nickname    = user.get('nickname')
-    #
-    #     if uid and uid != "0":
-    #         user_info['uid'] = uid
-    #     if short_id and short_id != '0':
-    #         user_info['short_id'] = short_id
-    #     if unique_id and unique_id != '0':
-    #         user_info['unique_id'] = unique_id
-    #     if nickname:
-    #         user_info['nickname'] = nickname
-    #     # 0 male 1 female 2 unset
-    #     if user.get('gender'):
-    #         user_info['gender'] = user['gender']
-    #     if user.get('birthday'):
-    #         user_info['birthday'] = user['birthday']
-    #     if user.get('status'):
-    #         user_info['status'] = user['status']
-    #     if user.get('region'):
-    #         user_info['region'] = user['region']
-    #     # 这里需要进行非空判断,有些没有值会覆盖之前的
-    #     if user.get('signature'):
-    #         user_info['signature'] = user.get('signature')
-    #     return user_info
-
 mongo_info=Connect_mongo()
 # mongo_info.save_user(mongo_info.packUser({'short_id':1,'nickname':'smw'}))
 # mongo_info.save_user(mongo_info.packUser({'short_id':1,'unique_id':'10000'}))
 # mongo_info.save_user(mongo_info.packUser({'short_id':1,'unique_id':'0'}))
 # mongo_info.save_comment({'uid':1,"aweme_id":'1','text':'test text'})
 # mongo_info.save_comment({'uid':1,"aweme_id":'1','text':'test text'})
+#
+mongo_info.find_insert_keyword({'keyword':"减肥"})
+mongo_info.find_insert_keyword({'keyword':"嘟嘟减肥"})

@@ -11,7 +11,7 @@ class CommentsInterceptor(Interceptor):
 
     def request(self, flow:http.HTTPFlow):
         #self.aweme_id = flow.request.query.get("aweme_id")
-        pass
+        Interceptor.request(self,flow)
 
     def response(self,flow):
         print("CommentsInterceptor matched------------------------------")
@@ -22,7 +22,7 @@ class CommentsInterceptor(Interceptor):
             cmt_info = {}
 
             cmt_info['cid']         = comment['cid']
-            cmt_info['vid']    = comment['aweme_id']
+            cmt_info['vid']         = comment['aweme_id']
             cmt_info['uid']         = comment['user']['uid']
             cmt_info['content']        = comment['text']
             cmt_info['createtime'] = comment['create_time'] #

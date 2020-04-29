@@ -1,19 +1,25 @@
-
+from mitmproxy import http
+from handle_db import mongo_info
 class Interceptor:
     def __init__(self,path):
         self.path = path
 
-    def match(self, flow):
+    def match(self, flow:http.HTTPFlow):
         url = flow.request.url
         return self.path in url
 
-    def request(self, flow):
+    def request(self, flow:http.HTTPFlow):
         # 由子类覆盖Interceptor.request 方法!!!!!!!!
-        pass
+        self.save_request_info(flow)
 
-    def response(self,flow):
+    def response(self,flow:http.HTTPFlow):
         # 由子类覆盖Interceptor.response 方法!!!!!!!!
         pass
+
+
+    def save_request_info(self,flow:http.HTTPFlow):
+        data = {'path':self.path,'method':flow.request.method,'scheme':flow.request.scheme,'host':flow.request.host,'headers':flow.request.headers,'url':flow.request.url,'query':flow.request.query}
+        mongo_info.save_request_info(data)
 
     def packUser(self,user):
         user_info = {}
@@ -37,7 +43,6 @@ class Interceptor:
             user_info['gender'] = user['gender']
         if user.get('birthday'):#生日
             user_info['birthday'] = user['birthday']
-
 
         if user.get('status'):
             user_info['status'] = user['status']
