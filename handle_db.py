@@ -22,6 +22,10 @@ class Connect_mongo(object):
             tb.find_one_and_update({'uid': data.get('uid')}, {'$set': data}, upsert=True)
         else:
             print("warning::save_user update failed,cant get short_id or unique_id or uid!!!!!!")
+    def save_fans(self,data):
+        tb = self.db['fans']
+        tb.find_one_and_update({'uid': data.get('uid'),'fid':data.get('fid')}, {'$set': data}, upsert=True)
+
 
     def handle_get_task(self):
         # 获取到数据，并删除数据库中的文档
