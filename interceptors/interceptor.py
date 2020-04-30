@@ -21,6 +21,12 @@ class Interceptor:
 
 
     def save_request_info(self,flow:http.HTTPFlow):
-        data = {'path':self.path,'method':flow.request.method,'scheme':flow.request.scheme,'host':flow.request.host,'headers':flow.request.headers,'url':flow.request.url,'query':flow.request.query}
+        query = None
+        if flow.request.method.lower() == "get":
+            query = flow.request.query
+        else:
+            query = flow.request.urlencoded_form
+
+        data = {'path':self.path,'method':flow.request.method,'scheme':flow.request.scheme,'host':flow.request.host,'headers':flow.request.headers,'url':flow.request.url,'query':query}
         db.save_request_info(data)
 
