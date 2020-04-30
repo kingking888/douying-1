@@ -34,14 +34,16 @@ class MongoDB(object):
         return tb.find_one({'path':path})
 
     #保存用户
-    def save_user(self,data):
+    def save_user(self,data,keyword_id):
         tb = self.db["user"]
         if data.get('short_id'):
-            tb.find_one_and_update({'short_id':data.get('short_id')},{'$set':data},upsert=True)
-        elif data.get('unique_id'):
-            tb.find_one_and_update({'unique_id': data.get('unique_id')}, {'$set': data}, upsert=True)
-        elif data.get('uid'):
-            tb.find_one_and_update({'uid': data.get('uid')}, {'$set': data}, upsert=True)
+            # db.col.update({"name": "kad"}, {$addToSet: {"tags": "mysql"}});
+            print("-----------------keyword_id:%s--------------"%keyword_id)
+            tb.find_one_and_update({'short_id':data.get('short_id')},{'$set':data,"$addToSet":{'keywords':keyword_id}},upsert=True)
+        # elif data.get('unique_id'):
+        #     tb.find_one_and_update({'unique_id': data.get('unique_id')}, {'$set': data}, upsert=True)
+        # elif data.get('uid'):
+        #     tb.find_one_and_update({'uid': data.get('uid')}, {'$set': data}, upsert=True)
         else:
             print("warning::save_user update failed,cant get short_id or unique_id or uid!!!!!!")
 
@@ -103,3 +105,5 @@ class MongoDB(object):
     def handle_get_task(self):
         # 获取到数据，并删除数据库中的文档
         return self.db['douyin'].find_one_and_delete({})
+
+

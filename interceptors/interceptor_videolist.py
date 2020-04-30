@@ -19,7 +19,7 @@ class VideoListInterceptor(Interceptor):
     def response(self,flow:http.HTTPFlow):
         print("VideoListInterceptor response------------------------------")
         print("*************************************")
-        print(flow.response.text)
+        # print(flow.response.text)
         print("*************************************")
         # for user in json.loads(flow.response.text)['followers']:
         #     user_info = Interceptor.packUser(self,user)

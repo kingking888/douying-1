@@ -1,4 +1,12 @@
 
+cur_keyword_id = -1
+def get_cur_keyword_id():
+    global cur_keyword_id
+    return cur_keyword_id
+def set_cur_keyword_id(v):
+    global cur_keyword_id
+    cur_keyword_id = v
+
 #
 def pack_user(user):
     user_info = {}

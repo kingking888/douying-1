@@ -6,7 +6,7 @@ import json
 from interceptors.interceptor import Interceptor
 from model.db_helper import db
 from mitmproxy import http
-from utils.data_util import pack_user
+from utils.data_util import pack_user,get_cur_keyword_id
 
 class UserInfoInterceptor(Interceptor):
     def __init__(self):
@@ -17,7 +17,10 @@ class UserInfoInterceptor(Interceptor):
 
     def response(self,flow:http.HTTPFlow):
         print("UserInfoInterceptor matched------------------------------")
-        user        = json.loads(flow.response.text)['user']
-        if user['author']['short_id']:
-            user_info   = pack_user(user)
-            db.save_user(user_info)
+        keyword_id = self.get_cur_keyword_id()
+
+        if keyword_id > 0:
+            user        = json.loads(flow.response.text)['user']
+            if user['author']['short_id']:
+                user_info   = pack_user(user)
+                db.save_user(user_info,keyword_id)

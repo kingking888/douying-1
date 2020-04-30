@@ -8,7 +8,7 @@ from model.db_helper import db
 from mitmproxy import http
 from urllib import parse
 from lib.difflib import SequenceMatcher
-from utils.data_util import pack_user,pack_video
+from utils.data_util import pack_user,pack_video,get_cur_keyword_id,set_cur_keyword_id
 
 
 class SearchInterceptor(Interceptor):
@@ -20,15 +20,16 @@ class SearchInterceptor(Interceptor):
 
 
     def response(self,flow:http.HTTPFlow):
-        print("UserInfoInterceptor matched------------------------------")
+        print("SearchInterceptor matched------------------------------")
 
         form_data = flow.request.urlencoded_form
         keyword = {'keyword':form_data['keyword']}
 
         key_info = db.find_insert_keyword(keyword)
-        group_id = key_info['keyword_id']
+        keyword_id = key_info['keyword_id']
+        set_cur_keyword_id(keyword_id)
 
-        data        = json.loads(flow.response.text)['data']
+        data  = json.loads(flow.response.text)['data']
 
         for v in data:
             if v['type'] == 1:
@@ -37,8 +38,8 @@ class SearchInterceptor(Interceptor):
                 if aweme_info['author'].get('short_id'):
                     #-----------handle user-----------------
                     user_info = pack_user(aweme_info['author'])
-                    user_info['keyword_id'] = group_id
-                    db.save_user(user_info)
+                    # user_info['keyword_id'] = keyword_id
+                    db.save_user(user_info,keyword_id)
 
                     #----------handle video-----------------
                     video   = pack_video(aweme_info)

@@ -1,5 +1,7 @@
 from mitmproxy import http
 from model.db_helper import db
+from utils.data_util import get_cur_keyword_id
+
 class Interceptor:
     def __init__(self,path):
         self.path = path
@@ -18,6 +20,15 @@ class Interceptor:
     def response(self,flow:http.HTTPFlow):
         # 由子类覆盖Interceptor.response 方法!!!!!!!!
         pass
+
+    def get_cur_keyword_id(self):
+        keyword_id = get_cur_keyword_id()
+
+        if keyword_id <= 0:
+            print("warning::%s.response keyword_id is unset,please search first!!!!!!" % self.__class__.__name__)
+            return -1
+        return keyword_id
+
 
 
     def save_request_info(self,flow:http.HTTPFlow):

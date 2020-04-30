@@ -5,7 +5,7 @@ import json
 from interceptors.interceptor import Interceptor
 from model.db_helper import db
 from mitmproxy import http
-from utils.data_util import pack_user
+from utils.data_util import pack_user,get_cur_keyword_id
 
 class FansInterceptor(Interceptor):
     def __init__(self):
@@ -19,15 +19,18 @@ class FansInterceptor(Interceptor):
         # print("-------------------------------\n" + str(flow.request.query) + "\n----------------------------")
         # print("------------uid:" + str(flow.request.query['user_id']))
 
-        user_id = flow.request.query['user_id']
+        keyword_id = self.get_cur_keyword_id()
 
-        for user in json.loads(flow.response.text)['followers']:
-            if user['author']['short_id']:
-                user_info = pack_user(user)
-                db.save_user(user_info)
+        if keyword_id > 0:
+            user_id = flow.request.query['user_id']
 
-                fans = {}
-                fans['uid'] = user_id
-                fans['fid'] = user['uid']
-                db.save_fans(fans)
-            # print("-------------------------------\n" + str(fans) + "\n----------------------------")
+            for user in json.loads(flow.response.text)['followers']:
+                if user['author']['short_id']:
+                    user_info = pack_user(user)
+                    db.save_user(user_info,keyword_id)
+
+                    fans = {}
+                    fans['uid'] = user_id
+                    fans['fid'] = user['uid']
+                    db.save_fans(fans)
+                # print("-------------------------------\n" + str(fans) + "\n----------------------------")
