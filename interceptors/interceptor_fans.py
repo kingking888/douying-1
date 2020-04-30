@@ -3,8 +3,9 @@
 '''
 import json
 from interceptors.interceptor import Interceptor
-from handle_db import mongo_info
+from model.db_helper import db
 from mitmproxy import http
+from utils.data_util import pack_user
 
 class FansInterceptor(Interceptor):
     def __init__(self):
@@ -21,11 +22,12 @@ class FansInterceptor(Interceptor):
         user_id = flow.request.query['user_id']
 
         for user in json.loads(flow.response.text)['followers']:
-            user_info = Interceptor.packUser(self,user)
-            mongo_info.save_user(user_info)
+            if user['author']['short_id']:
+                user_info = pack_user(user)
+                db.save_user(user_info)
 
-            fans = {}
-            fans['uid'] = user_id
-            fans['fid'] = user['uid']
-            mongo_info.save_fans(fans)
+                fans = {}
+                fans['uid'] = user_id
+                fans['fid'] = user['uid']
+                db.save_fans(fans)
             # print("-------------------------------\n" + str(fans) + "\n----------------------------")

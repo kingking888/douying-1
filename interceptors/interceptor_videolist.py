@@ -3,9 +3,10 @@
 '''
 import json
 from interceptors.interceptor import Interceptor
-from handle_db import mongo_info
 from mitmproxy import http
 from google.protobuf.json_format import MessageToJson,Parse
+from utils.data_util import pack_user
+from model.db_helper import db
 
 
 class VideoListInterceptor(Interceptor):

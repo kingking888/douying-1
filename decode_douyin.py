@@ -7,16 +7,19 @@ from interceptors.interceptor_videolist import VideoListInterceptor
 from interceptors.interceptor_search import SearchInterceptor
 from mitmproxy import http
 
-interceptors = [CommentsInterceptor(),SearchInterceptor(),VideoListInterceptor(),FansInterceptor(),UserInfoInterceptor()]
+# interceptors = [CommentsInterceptor(),SearchInterceptor(),VideoListInterceptor(),FansInterceptor(),UserInfoInterceptor()]
+# interceptors = [SearchInterceptor()]
+
 dictInterceptors = dict()
 def registerInterceptor(Interceptor):
     handler = Interceptor()
-    dictInterceptors['path'] = Interceptor()
+    dictInterceptors[handler.get_path()] = Interceptor()
 
-# registerInterceptor(CommentsInterceptor)
-# registerInterceptor(VideoListInterceptor)
-# registerInterceptor(FansInterceptor)
-# registerInterceptor(UserInfoInterceptor)
+registerInterceptor(CommentsInterceptor)
+registerInterceptor(VideoListInterceptor)
+registerInterceptor(FansInterceptor)
+registerInterceptor(UserInfoInterceptor)
+registerInterceptor(SearchInterceptor)
 
 class Listener:
 
@@ -24,17 +27,17 @@ class Listener:
         pass
 
     def request(self,flow:http.HTTPFlow):
-        # print("-------------------------------request url:" + flow.request.pretty_url)
-        for interceptor in interceptors:
-            if interceptor.match(flow):
-                interceptor.request(flow)
-                break
+        path = flow.request.path.split("?")[0]
+        handler = dictInterceptors.get(path)
+        if handler != None:
+            handler.request(flow)
 
     def response(self,flow:http.HTTPFlow):
-        for interceptor in interceptors:
-            if interceptor.match(flow):
-                interceptor.response(flow)
-                break
+        path = flow.request.path.split("?")[0]
+        handler = dictInterceptors.get(path)
+        if handler != None:
+            handler.response(flow)
+
 
 
 addons=[

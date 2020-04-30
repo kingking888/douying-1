@@ -4,8 +4,9 @@
 
 import json
 from interceptors.interceptor import Interceptor
-from handle_db import mongo_info
+from model.db_helper import db
 from mitmproxy import http
+from utils.data_util import pack_user
 
 class UserInfoInterceptor(Interceptor):
     def __init__(self):
@@ -17,5 +18,6 @@ class UserInfoInterceptor(Interceptor):
     def response(self,flow:http.HTTPFlow):
         print("UserInfoInterceptor matched------------------------------")
         user        = json.loads(flow.response.text)['user']
-        user_info   = Interceptor.packUser(self,user)
-        mongo_info.save_user(user_info)
+        if user['author']['short_id']:
+            user_info   = pack_user(user)
+            db.save_user(user_info)
