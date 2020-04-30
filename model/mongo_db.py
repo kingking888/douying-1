@@ -38,7 +38,7 @@ class MongoDB(object):
         tb = self.db["user"]
         if data.get('short_id'):
             # db.col.update({"name": "kad"}, {$addToSet: {"tags": "mysql"}});
-            print("-----------------keyword_id:%s--------------"%keyword_id)
+            # print("-----------------keyword_id:%s--------------"%keyword_id)
             tb.find_one_and_update({'short_id':data.get('short_id')},{'$set':data,"$addToSet":{'keywords':keyword_id}},upsert=True)
         # elif data.get('unique_id'):
         #     tb.find_one_and_update({'unique_id': data.get('unique_id')}, {'$set': data}, upsert=True)
