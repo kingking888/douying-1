@@ -13,8 +13,6 @@ class VideoListInterceptor(Interceptor):
     def __init__(self):
         Interceptor.__init__(self,'/aweme/v2/feed/')
 
-    def request(self, flow:http.HTTPFlow):
-        pass
 
     def response(self,flow:http.HTTPFlow):
         print("VideoListInterceptor response------------------------------")

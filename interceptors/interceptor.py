@@ -14,7 +14,6 @@ class Interceptor:
         return self.path in url
 
     def request(self, flow:http.HTTPFlow):
-        # 由子类覆盖Interceptor.request 方法!!!!!!!!
         self.save_request_info(flow)
 
     def response(self,flow:http.HTTPFlow):
@@ -29,15 +28,18 @@ class Interceptor:
             return -1
         return keyword_id
 
-
-
-    def save_request_info(self,flow:http.HTTPFlow):
+    def save_request_info(self, flow: http.HTTPFlow):
         query = None
-        if flow.request.method.lower() == "get":
-            query = flow.request.query
+        request = flow.request
+        if request.method.lower() == "get":
+            query = request.query
         else:
-            query = flow.request.urlencoded_form
+            query = request.urlencoded_form
 
-        data = {'path':self.path,'method':flow.request.method,'scheme':flow.request.scheme,'host':flow.request.host,'headers':flow.request.headers,'url':flow.request.url,'query':query}
+        token = request.cookies.get('uid_tt') or ''
+
+        data = {'path': self.path, 'method': request.method, 'token': token,
+                'scheme': request.scheme, 'host': request.host, 'headers': request.headers, 'url': request.url,
+                'query': request.query, 'form': request.urlencoded_form}
         db.save_request_info(data)
 

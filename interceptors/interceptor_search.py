@@ -15,9 +15,6 @@ class SearchInterceptor(Interceptor):
     def __init__(self):
         Interceptor.__init__(self,'/aweme/v1/general/search/single/')
 
-    def request(self, flow:http.HTTPFlow):
-        super(SearchInterceptor,self).request(flow)
-
 
     def response(self,flow:http.HTTPFlow):
         print("SearchInterceptor matched------------------------------")

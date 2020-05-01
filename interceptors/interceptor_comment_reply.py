@@ -10,8 +10,6 @@ class CommentReplyInterceptor(Interceptor):
         Interceptor.__init__(self, '/aweme/v1/comment/list/reply/')
         #self.aweme_id = ""
 
-    def request(self, flow:http.HTTPFlow):
-       pass
 
     def response(self,flow):
         print("CommentsInterceptor matched------------------------------")
@@ -19,7 +17,7 @@ class CommentReplyInterceptor(Interceptor):
         keyword_id = self.get_cur_keyword_id()
         if keyword_id > 0:
             for comment in json.loads(flow.response.text)['comments']:
-                if comment['user']['short_id']:
+                if comment['user'].get('short_id'):
                     user_info = pack_user(comment['user'])
                     db.save_user(user_info,keyword_id)
 

@@ -10,9 +10,6 @@ class CommentsInterceptor(Interceptor):
         Interceptor.__init__(self, '/aweme/v2/comment/list/')
         #self.aweme_id = ""
 
-    def request(self, flow:http.HTTPFlow):
-        #self.aweme_id = flow.request.query.get("aweme_id")
-        Interceptor.request(self,flow)
 
     def response(self,flow):
         print("CommentsInterceptor matched------------------------------")

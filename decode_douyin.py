@@ -5,6 +5,7 @@ from interceptors.interceptor_comments import CommentsInterceptor
 from interceptors.interceptor_userinfo import UserInfoInterceptor
 from interceptors.interceptor_videolist import VideoListInterceptor
 from interceptors.interceptor_search import SearchInterceptor
+from interceptors.interceptor_comment_reply import CommentReplyInterceptor
 from mitmproxy import http
 
 # interceptors = [CommentsInterceptor(),SearchInterceptor(),VideoListInterceptor(),FansInterceptor(),UserInfoInterceptor()]
@@ -20,6 +21,7 @@ registerInterceptor(VideoListInterceptor)
 registerInterceptor(FansInterceptor)
 registerInterceptor(UserInfoInterceptor)
 registerInterceptor(SearchInterceptor)
+registerInterceptor(CommentReplyInterceptor)
 
 class Listener:
 

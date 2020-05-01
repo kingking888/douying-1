@@ -27,7 +27,7 @@ class MongoDB(object):
             print("warnning::save_request_info's path param is nil!!!!")
             return
         tb = self.db['request']
-        tb.find_one_and_replace({'path':data['path']},data,upsert=True)
+        tb.find_one_and_replace({'token':data['token'],'path':data['path']},data,upsert=True)
 
     def get_request_info(self,path):
         tb = self.db['request']

@@ -11,9 +11,6 @@ class FansInterceptor(Interceptor):
     def __init__(self):
         Interceptor.__init__(self,'/aweme/v1/user/follower/list/')
 
-    def request(self, flow:http.HTTPFlow):
-        pass
-
     def response(self,flow:http.HTTPFlow):
         print("FansInterceptor matched------------------------------")
         # print("-------------------------------\n" + str(flow.request.query) + "\n----------------------------")
@@ -25,8 +22,11 @@ class FansInterceptor(Interceptor):
             user_id = flow.request.query['user_id']
 
             for user in json.loads(flow.response.text)['followers']:
-                if user['author']['short_id']:
+                if user.get('short_id'):
                     user_info = pack_user(user)
+                    print("*********************************************")
+                    print(user_info)
+                    print("*********************************************")
                     db.save_user(user_info,keyword_id)
 
                     fans = {}
