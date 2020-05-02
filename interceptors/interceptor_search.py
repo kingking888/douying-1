@@ -24,7 +24,9 @@ class SearchInterceptor(Interceptor):
 
         key_info = db.find_insert_keyword(keyword)
         keyword_id = key_info['keyword_id']
-        set_cur_keyword_id(keyword_id)
+
+        if get_cur_keyword_id() == -1:
+            set_cur_keyword_id(keyword_id)
 
         data  = json.loads(flow.response.text)['data']
 

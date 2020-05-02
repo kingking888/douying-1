@@ -102,6 +102,10 @@ class MongoDB(object):
             # print("%s and %s similar ratio:%f" % (keyword,v['keyword'], ratio))
         return item,similar
 
+    def query_keyword(self,kw_id):
+        tb = self.db['keywords']
+        return tb.find_one({'keyword_id':kw_id})
+
     def handle_get_task(self):
         # 获取到数据，并删除数据库中的文档
         return self.db['douyin'].find_one_and_delete({})

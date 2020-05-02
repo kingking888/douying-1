@@ -16,6 +16,8 @@ class CommentsInterceptor(Interceptor):
 
         keyword_id = self.get_cur_keyword_id()
 
+        print("ddddddddddddddddddddddddddddddkeyword_id:%d"%keyword_id)
+
         if keyword_id > 0:
             for comment in json.loads(flow.response.text)['comments']:
                 if comment['user']['short_id']:
