@@ -1,10 +1,12 @@
-from res.ui.mainui import Ui_MainWindow
+# -*- coding: utf-8 -*-
+# from mainui import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow,QDialog
 from PyQt5.QtCore import *
 import sys
 import time
 from utils.data_util import get_cur_keyword_id,set_cur_keyword_id
 from model.db_helper import db
+from views.uimainview import Ui_MainWindow
 
 class MainView(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):

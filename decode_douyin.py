@@ -1,4 +1,4 @@
-import json
+# -*- coding: utf-8 -*-
 
 from interceptors.interceptor_fans import FansInterceptor
 from interceptors.interceptor_comments import CommentsInterceptor
@@ -10,11 +10,10 @@ from mitmproxy import http
 from optparse import OptionParser
 from utils.data_util import set_cur_keyword_id
 
-from res.ui.mainui import Ui_MainWindow
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication
 import sys
 import _thread
-
+from views.view import MainView
 
 # interceptors = [CommentsInterceptor(),SearchInterceptor(),VideoListInterceptor(),FansInterceptor(),UserInfoInterceptor()]
 # interceptors = [SearchInterceptor()]
@@ -70,7 +69,7 @@ addons = [
         Listener()
     ]
 
-from ui.dy_ui import MainView
+
 def entry(threadname,delay):
     # 固定的，PyQt5程序都需要QApplication对象。sys.argv是命令行参数列表，确保程序可以双击运行
     app = QApplication(sys.argv)
@@ -82,6 +81,6 @@ def entry(threadname,delay):
     sys.exit(app.exec_())
 
 
-_thread.start_new_thread(entry,('ui thread',0.5))
+_thread.start_new_thread(entry,('views thread',0.5))
 # entry()
 

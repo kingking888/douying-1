@@ -1060,7 +1060,7 @@ class Differ:
 # If you consider whitespace to be junk, the longest contiguous match
 # not starting with junk is "e Thread currentThread".  So ndiff reported
 # that "e volatil" was inserted between the 't' and the 'e' in "private".
-# While an accurate view, to people that's absurd.  The current version
+# While an accurate views, to people that's absurd.  The current version
 # looks for matching blocks that are entirely junk-free, then extends the
 # longest one of those as far as possible but only with matching junk.
 # So now "currentThread" is matched, then extended to suck up the
