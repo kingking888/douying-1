@@ -70,7 +70,7 @@ addons = [
         Listener()
     ]
 
-from ui.ui import MainView
+from ui.dy_ui import MainView
 def entry(threadname,delay):
     # 固定的，PyQt5程序都需要QApplication对象。sys.argv是命令行参数列表，确保程序可以双击运行
     app = QApplication(sys.argv)
