@@ -1,12 +1,8 @@
 '''
 获取粉丝
 '''
-import json
-from interceptors.interceptor import Interceptor
+from core.interceptors import Interceptor
 from mitmproxy import http
-from google.protobuf.json_format import MessageToJson,Parse
-from utils.data_util import pack_user
-from model.db_helper import db
 
 
 class VideoListInterceptor(Interceptor):

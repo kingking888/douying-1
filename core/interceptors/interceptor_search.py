@@ -3,11 +3,9 @@
 '''
 
 import json
-from interceptors.interceptor import Interceptor
-from model.db_helper import db
+from core.interceptors import Interceptor
+from model.model import db
 from mitmproxy import http
-from urllib import parse
-from lib.difflib import SequenceMatcher
 from utils.data_util import pack_user,pack_video,get_cur_keyword_id,set_cur_keyword_id
 
 

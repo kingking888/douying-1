@@ -5,7 +5,7 @@ import time
 import random
 
 from urllib import parse
-from model.db_helper import db
+from model.model import db
 from model.vo import RequestVO
 from model.model import dy_model
 from model.vo import CommentListRequestVO,SearchRequestVO

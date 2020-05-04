@@ -1,4 +1,8 @@
 
+from model.db_mongo import MongoDB
+
+db = MongoDB()
+
 class DYModel():
     def __init__(self):
         self.video_datas = []
@@ -16,4 +20,3 @@ class DYModel():
 
 
 dy_model = DYModel()
-dy_model.pop_video()

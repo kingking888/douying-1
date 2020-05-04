@@ -1,5 +1,5 @@
 from mitmproxy import http
-from model.db_helper import db
+from model.model import db
 from utils.data_util import get_cur_keyword_id
 
 class Interceptor:

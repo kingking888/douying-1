@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 import sys
 import time
 from utils.data_util import get_cur_keyword_id,set_cur_keyword_id
-from model.db_helper import db
+from model.model import db
 from views.uimainview import Ui_MainWindow
 
 class MainView(QMainWindow, Ui_MainWindow):

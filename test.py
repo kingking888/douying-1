@@ -10,3 +10,6 @@ from utils.data_util import get_cur_keyword_id
 
 
 print(get_cur_keyword_id())
+
+
+

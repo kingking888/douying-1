@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from interceptors.interceptor_fans import FansInterceptor
-from interceptors.interceptor_comments import CommentsInterceptor
-from interceptors.interceptor_userinfo import UserInfoInterceptor
-from interceptors.interceptor_videolist import VideoListInterceptor
-from interceptors.interceptor_search import SearchInterceptor
-from interceptors.interceptor_comment_reply import CommentReplyInterceptor
+from core.interceptors.interceptor_fans import FansInterceptor
+from core.interceptors.interceptor_comments import CommentsInterceptor
+from core.interceptors import UserInfoInterceptor
+from core.interceptors import VideoListInterceptor
+from core.interceptors import SearchInterceptor
+from core.interceptors.interceptor_comment_reply import CommentReplyInterceptor
 from mitmproxy import http
 from optparse import OptionParser
 from utils.data_util import set_cur_keyword_id
@@ -80,7 +80,9 @@ def entry(threadname,delay):
     # 程序运行，sys.exit方法确保程序完整退出。
     sys.exit(app.exec_())
 
-
-_thread.start_new_thread(entry,('views thread',0.5))
+if __name__ == "__main__":
+    entry("",0.5)
+else:
+    _thread.start_new_thread(entry, ('views thread', 0.5))
 # entry()
 

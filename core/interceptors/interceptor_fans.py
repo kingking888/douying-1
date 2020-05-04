@@ -2,10 +2,11 @@
 获取粉丝
 '''
 import json
-from interceptors.interceptor import Interceptor
-from model.db_helper import db
+from core.interceptors import Interceptor
+from model.model import db
 from mitmproxy import http
-from utils.data_util import pack_user,get_cur_keyword_id
+from utils.data_util import pack_user
+
 
 class FansInterceptor(Interceptor):
     def __init__(self):
