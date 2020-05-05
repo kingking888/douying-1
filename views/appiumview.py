@@ -26,6 +26,9 @@ class View():
     def find_element_by_xpath(self,id_):
         return self.driver.find_element_by_xpath(id_)
 
+    def find_element_by_xpath(self,path):
+        self.driver.find_element_by_xpath(path)
+
     def open(self):
         pass
 
@@ -56,7 +59,7 @@ class SearchView(View):
 
     def search(self,keyword):
 
-        print("click search button.")
+        print("点击首页右上方的搜索按钮..")
         resid = "com.ss.android.ugc.aweme:id/bxp"
         if self.wait.until(lambda x:x.find_element_by_id(resid)):
             print("found search button.")
@@ -64,32 +67,55 @@ class SearchView(View):
             print("-----------------0")
 
         t = time.time()
-        print("set search text.")
+        print("查找搜索界面上的输入框.")
         resid = "com.ss.android.ugc.aweme:id/ai2"
         if self.wait.until(lambda x:x.find_element_by_id(resid)):
-            print("-----------------1")
             edit_text = self.driver.find_element_by_id(resid)
             edit_text.click()
-            print("-----------------2")
-            time.sleep(1)
+            time.sleep(0.4)
             edit_text.send_keys(keyword)
-            print("-----------------3")
-            time.sleep(1)
+            time.sleep(0.3)
             edit_text.click()
-            time.sleep(1)
+            time.sleep(0.2)
             print("-----------------4")
             # self.sh("adb shell ime set com.sohu.inputmethod.sogou/.SogouIME")
-            time.sleep(1)
 
             # 一下两句实现回车搜索
             self.driver.keyevent(66)
             self.driver.press_keycode(66)
             print("-----------------5")
 
+            #粉丝
+            print("查找用户信息上的粉丝文本并点击.")
             resid = "com.ss.android.ugc.aweme:id/fq7"
             if self.wait.until(lambda x: x.find_element_by_id(resid)):
                 print("-----------------1")
                 self.driver.find_element_by_id(resid).click()
+
+                print("查找用户信息界面右上角三个小圆点按钮.")
+                resid = "com.ss.android.ugc.aweme:id/f9a"
+                if self.wait.until(lambda x: x.find_element_by_id(resid)):
+                    print("-----------------1")
+                    self.driver.find_element_by_id(resid).click()
+
+                    print("查找发私信按钮.")
+                    resid = "com.ss.android.ugc.aweme:id/eiy"
+                    if self.wait.until(lambda x: x.find_element_by_id(resid)):
+                        print("-----------------1")
+                        self.driver.find_element_by_id(resid).click()
+
+                        # print("查找发私信按钮.")
+                        # resid = "com.ss.android.ugc.aweme:id/eiy"
+                        # if self.wait.until(lambda x: x.find_element_by_id(resid)):
+                        #     print("-----------------1")
+                        #     self.driver.find_element_by_id(resid).click()
+
+                        resid = "android.widget.EditText[@text='发送消息…']"
+                        if self.wait.until(lambda x: x.find_element_by_xpath(resid)):
+                            print("-----------------1")
+                            edit_text = self.driver.find_element_by_xpath(resid)
+                            edit_text.click()
+                            edit_text.send_keys("士大夫")
 
 
 
@@ -109,7 +135,7 @@ if __name__ == '__main__':
         driver = get_driver('127.0.0.1:62001', 62001)
         # arr = driver.available_ime_engines
         view = IndexView(driver)
-        view.openSearchView("减肥")
+        view.openSearchView("1169821489")
         time.sleep(10000)
         driver.close()
     except Exception as e:
@@ -118,6 +144,8 @@ if __name__ == '__main__':
 
     # driver.press_keycode(66)
     #  d = webdriver.Remote()
+    # driver.find_element_by_xpath()
+    # driver.find_element_by_class_name()
 
     # d.close()
     # d.keyevent()
