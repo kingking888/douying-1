@@ -4,22 +4,36 @@ from model.model import get_driver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.expected_conditions import NoSuchElementException
 from views.res import *
 
 import time
-
+import random
 
 
 class Action():
     def __init__(self,driver,owner=None,wait_time=15):
-        self.driver = driver
-        self.owner  = owner
-        self.dicEle = dict()
+        self.driver         = driver
+        self.owner          = owner
+        self.dicEle         = dict()
 
-        self.wait   = WebDriverWait(self.driver,wait_time)
+        self._finished      = False
+        self.wait           = WebDriverWait(self.driver,wait_time)
 
     def set_owner(self,owner):
         self.owner = owner
+
+    def enter(self,*args,**kwargs):
+        pass
+
+    def execute(self,*args,**kwargs):
+        pass
+
+    def destroy(self):
+        pass
+
+    def is_finished(self):
+        return self._finished
 
     def find_element_by_id(self, id_, message='',use_timeout=True,force_find=False):
         ele = self.dicEle.get(id_)
@@ -31,7 +45,7 @@ class Action():
                 ele = self.wait.until(lambda x:x.find_element_by_id(id_),message=message)
             else:
                 ele = self.driver.find_element_by_id(id_)
-        except Exception as e:
+        except NoSuchElementException as e:
             ele = None
             print(e)
 
@@ -51,7 +65,7 @@ class Action():
                 ele = self.wait.until(lambda x: x.find_element_by_xpath(id_), message)
             else:
                 ele = self.driver.find_element_by_xpath(id_)
-        except Exception as e:
+        except NoSuchElementException as e:
             ele = None
             print(e)
 
@@ -82,12 +96,44 @@ class Action():
         self.driver.keyevent(66)
         self.driver.press_keycode(66)
 
+    def back(self):
+        time.sleep(self.get_rnd(0.1,0.15))
+        self.driver.keyevent(4) #
+
+    # 返回到主界面
+    def back2_home(self):
+        while not self.isIndex():
+            self.back()
+            time.sleep(self.get_rnd(0.05,0.2))
+    # 返回到搜索界面
+    def back2_search_view(self):
+        while not self.is_search_view():
+            self.back()
+
+
     # 是否首页,注意没有做等待处理,只
-    def isIndex(self):
-        ele = WebDriverWait(self.driver,0.3,ignored_exceptions=True).until(lambda driver:driver.find_element_by_id(INDEX_INDEX_TEXT))
-        return ele != None
+    def isIndex(self,use_timeout=True):
+        # ele = WebDriverWait(self.driver,0.3,ignored_exceptions=Exception).until(lambda driver:driver.find_element_by_id(INDEX_INDEX_TEXT))
+        try:
+            ele = self.find_element_by_id(INDEX_INDEX_TEXT,use_timeout=use_timeout,force_find=True)
+            return ele != None
+        except Exception:
+            pass
+        return False
 
+    # 是否搜索页面
+    def is_search_view(self):
+        try:
+            # ele = WebDriverWait(self.driver, 0.3, ignored_exceptions=Exception).until(
+            #     lambda driver: driver.find_element_by_id(SEARCH_INPUT_TEXT))
+            ele = self.find_element_by_id(SEARCH_INPUT_TEXT, use_timeout=False, force_find=True)
+            return ele != None
+        except Exception as e:
+            pass
+        return False
 
+    def get_rnd(self,min,max):
+        return random.random() * (max - min) + min
 
 
 
@@ -98,9 +144,31 @@ class BatchSendPrtMsgAction(Action):
     def __init__(self,driver):
         super(BatchSendPrtMsgAction, self).__init__(driver)
 
+    def enter(self,*args,**kwargs):
+        super(BatchSendPrtMsgAction, self).enter(*args,**kwargs)
+        self.datas = kwargs.get("datas")
+        self._finished = False
+
+    def execute(self,*args,**kwargs):
+        super(BatchSendPrtMsgAction, self).execute(*args,**kwargs)
+
+        if not self.is_finished():
+            if self.datas and len(self.datas) > 0:
+                msg_action = SendPrtMsgAction(self.driver)
+                for d in  self.datas:
+                    msg_action.enter()
+                    msg_action.execute(keyword=d.get('nike'))
+                    msg_action.back2_search_view()
+                    time.sleep(self.get_rnd(0.2,0.4))
+
+                self._finished = True
+
+
     def open_search_view(self,keywrod):
         searchView = SendPrtMsgAction(self.driver)
         searchView.opt_prt_msg(keywrod)
+
+
 
 class SendPrtMsgAction(Action):
 
@@ -116,16 +184,25 @@ class SendPrtMsgAction(Action):
         import subprocess
         p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
+    def enter(self,*args,**kwargs):
+        super(SendPrtMsgAction, self).enter(*args,**kwargs)
+        self.is_finished = False
 
     # 发送私信
-    def execute(self,keyword):
-        self.open_search_view()
-        self.input_search_text(keyword)
-        self.open_prt_view()
-        self.input_prt_msg()
-        self.send_prt_msg()
-
-
+    def execute(self,*args,**kwargs):
+        keyword = kwargs.get("keyword")
+        if keyword:
+            if self.isIndex():
+                self.open_search_view()
+                time.sleep(self.get_rnd(0.06,0.2))
+            self.input_search_text(keyword)
+            time.sleep(self.get_rnd(0.06, 0.2))
+            self.open_prt_view()
+            time.sleep(self.get_rnd(0.06, 0.2))
+            self.input_prt_msg()
+            time.sleep(self.get_rnd(0.06, 0.2))
+            self.send_prt_msg()
+        self.is_finished = True
 
     # 从搜界面打开搜索界面
     def open_search_view(self):
@@ -172,15 +249,20 @@ class SendPrtMsgAction(Action):
 if __name__ == '__main__':
     driver = None
     try:
+        arr = [{'unique_id':'','short_id':'62713337','nike':'张丽霞'}
+            ,{'unique_id':'','short_id':'1100870146','nike':'为你而美'}
+            ,{'unique_id':'','short_id':'2301531913','nike':'全能仙女（dd猪页）'}]
+
         # adb connect 127.0.0.1:62001
         #driver = get_driver('127.0.0.1:62001', 62001)
         driver = get_driver('127.0.0.1:62001', 62025)
         # arr = driver.available_ime_engines
-        view = SendPrtMsgAction(driver)
-        view.execute("海口浓情美容连锁")
+        view = BatchSendPrtMsgAction(driver)
+        view.enter(datas=arr)
+        view.execute()
         time.sleep(10000)
         driver.close()
-    except Exception as e:
+    except BaseException as e:
         print(e)
         driver.close()
 
