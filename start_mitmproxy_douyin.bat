@@ -1,1 +1,1 @@
-mitmdump -s decode_douyin.py -p 8080 --mode upstream
+mitmdump -s decode_douyin.py -p 8080
