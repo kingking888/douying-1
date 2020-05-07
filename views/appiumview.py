@@ -12,19 +12,17 @@ import random
 
 
 class Action():
-    def __init__(self,driver,owner=None,wait_time=15):
+    def __init__(self,driver,owner=None):
         self.driver         = driver
         self.owner          = owner
-        self.dicEle         = dict()
 
         self._finished      = False
-        self.wait           = WebDriverWait(self.driver,wait_time)
 
     def set_owner(self,owner):
         self.owner = owner
 
     def enter(self,*args,**kwargs):
-        pass
+        self._finished = False
 
     def execute(self,*args,**kwargs):
         pass
@@ -34,6 +32,32 @@ class Action():
 
     def is_finished(self):
         return self._finished
+
+    def get_rnd(self,min,max):
+        return random.random() * (max - min) + min
+
+    def get_win_size():
+        # 获取设备屏幕大小
+        win_size = self.driver.get_window_size()
+        x = win_size['width']
+        y = win_size['height']
+        return x, y
+
+    def send_return_event(self):
+        print("按回车需要安装第三方输入法,比如搜狗")
+        # 一下两句实现回车搜索,需要安装第三方输入法,比如搜狗
+        self.driver.keyevent(66)
+        self.driver.press_keycode(66)
+
+    def back(self):
+        time.sleep(self.get_rnd(0.05,0.15))
+        self.driver.keyevent(4) #
+
+class DouYinAction(Action):
+    def __init__(self,driver,wait_time=10):
+        super(DouYinAction, self).__init__(driver)
+        self.dicEle = dict()
+        self.wait = WebDriverWait(self.driver, wait_time)
 
     def find_element_by_id(self, id_, message='',use_timeout=True,force_find=False):
         ele = self.dicEle.get(id_)
@@ -89,17 +113,6 @@ class Action():
             raise Exception("View::click not implementation with %s" % findType)
 
         return ele
-
-    def send_return_event(self):
-        print("按回车需要安装第三方输入法,比如搜狗")
-        # 一下两句实现回车搜索,需要安装第三方输入法,比如搜狗
-        self.driver.keyevent(66)
-        self.driver.press_keycode(66)
-
-    def back(self):
-        time.sleep(self.get_rnd(0.1,0.15))
-        self.driver.keyevent(4) #
-
     # 返回到主界面
     def back2_home(self):
         while not self.isIndex():
@@ -132,12 +145,55 @@ class Action():
             pass
         return False
 
-    def get_rnd(self,min,max):
-        return random.random() * (max - min) + min
 
+class SwipeAction(DouYinAction):
+    def __init__(self,driver):
+        super(SwipeAction, self).__init__(driver)
 
+        self.swipe_count    = 1
+        self.direction      = "up" # or 'down'
+        self.delay_min      = 1
+        self.delay_max      = 7
 
-class BatchSendPrtMsgAction(Action):
+    def enter(self,*args,**kwargs):
+        super(SwipeAction, self).enter(*args,**kwargs)
+
+        win_size = self.driver.get_window_size()
+        x = win_size['width']
+        y = win_size['height']
+
+        # self.size       = self.get_win_size()
+        self.size = [x,y]
+        self.direction  = kwargs.get("direction")   or "up"
+        self.swipe_count= kwargs.get('swipe_count') or 1
+
+        print("SwipeAction enter......")
+
+    def execute(self,*args,**kwargs):
+        print("SwipeAction execute......")
+        if not self.is_finished():
+            for i in range(0,self.swipe_count):
+
+                x       = int(self.size[0] * self.get_rnd(0.3,0.6))
+                s_y     = int(self.size[1] * self.get_rnd(0.05,0.3))
+                b_y     = int(self.size[1] * self.get_rnd(0.7, 0.87))
+
+                _from   = None
+                _to     = None
+                if self.direction == "up":
+                    _from   = [x,b_y]
+                    _to     = [x,s_y]
+                elif self.direction == "down":
+                    _to     = [x, b_y]
+                    _from   = [x, s_y]
+
+                print("start to swipe %d:from %f,%f to %f,%f" % (i, _from[0], _from[1], _to[0], _to[1]))
+                self.driver.swipe(_from[0], _from[1], _to[0], _to[1])
+                time.sleep(self.get_rnd(self.delay_min, self.delay_max))
+
+            self._finished = True
+
+class BatchSendPrtMsgAction(DouYinAction):
     '''
     批量发私信
     '''
@@ -147,11 +203,12 @@ class BatchSendPrtMsgAction(Action):
     def enter(self,*args,**kwargs):
         super(BatchSendPrtMsgAction, self).enter(*args,**kwargs)
         self.datas = kwargs.get("datas")
-        self._finished = False
+        print("BatchSendPrtMsgAction enter......")
+
 
     def execute(self,*args,**kwargs):
         super(BatchSendPrtMsgAction, self).execute(*args,**kwargs)
-
+        print("BatchSendPrtMsgAction execute......")
         if not self.is_finished():
             if self.datas and len(self.datas) > 0:
                 msg_action = SendPrtMsgAction(self.driver)
@@ -170,7 +227,7 @@ class BatchSendPrtMsgAction(Action):
 
 
 
-class SendPrtMsgAction(Action):
+class SendPrtMsgAction(DouYinAction):
 
     '''
     发私信
@@ -186,10 +243,12 @@ class SendPrtMsgAction(Action):
 
     def enter(self,*args,**kwargs):
         super(SendPrtMsgAction, self).enter(*args,**kwargs)
-        self.is_finished = False
+        print("SendPrtMsgAction enter......")
 
     # 发送私信
     def execute(self,*args,**kwargs):
+        print("SendPrtMsgAction execute......")
+
         keyword = kwargs.get("keyword")
         if keyword:
             if self.isIndex():
@@ -249,16 +308,20 @@ class SendPrtMsgAction(Action):
 if __name__ == '__main__':
     driver = None
     try:
-        arr = [{'unique_id':'','short_id':'62713337','nike':'张丽霞'}
-            ,{'unique_id':'','short_id':'1100870146','nike':'为你而美'}
-            ,{'unique_id':'','short_id':'2301531913','nike':'全能仙女（dd猪页）'}]
+        arr = [{'unique_id':'','short_id':'62713337','nike':'来咯离婚率'}
+            ,{'unique_id':'','short_id':'1100870146','nike':'嘘赵寅成睡着惹'}
+            ,{'unique_id':'','short_id':'2301531913','nike':'朦胧的前途有你的存在'}]
 
         # adb connect 127.0.0.1:62001
         #driver = get_driver('127.0.0.1:62001', 62001)
         driver = get_driver('127.0.0.1:62001', 62025)
         # arr = driver.available_ime_engines
-        view = BatchSendPrtMsgAction(driver)
-        view.enter(datas=arr)
+        # view = BatchSendPrtMsgAction(driver)
+        view = SwipeAction(driver)
+
+        time.sleep(2)
+
+        view.enter(datas=arr,swipe_count=5)
         view.execute()
         time.sleep(10000)
         driver.close()
