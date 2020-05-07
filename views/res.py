@@ -4,7 +4,9 @@
 # 右上方的搜索按钮
 INDEX_SEARCH_BUTTON_ID = "com.ss.android.ugc.aweme:id/bxp"
 # 首页文本
-INDEX_INDEX_TEXT        = "com.ss.android.ugc.aweme:id/f36"
+INDEX_INDEX_TEXT_ID        = "com.ss.android.ugc.aweme:id/f36"
+INDEX_INDEX_TEXT_CLASS     = "//android.widget.TextView[@text='首页']"
+
 
 # -----------------------搜索界面-----------------------
 # 上方的输入框
@@ -12,7 +14,8 @@ SEARCH_INPUT_TEXT       = "com.ss.android.ugc.aweme:id/ai2"
 
 # -----------------------用户信息界面-----------------------
 # 用户信息上的粉丝文本并点击
-USERINFO_FANS_TEXT      = "com.ss.android.ugc.aweme:id/fq7"
+USERINFO_FANS_TEXT_ID      = "com.ss.android.ugc.aweme:id/fq7"
+USERINFO_FANS_TEXT_CLASS     = "//android.widget.TextView[contains(@text,'粉丝:']"
 # 用户信息界面右上角三个小圆点按钮
 USERINFO_3_DOT          = "com.ss.android.ugc.aweme:id/f9a"
 # 用户信息界面->右上角三个小圆点按钮弹出框->发私信按钮
